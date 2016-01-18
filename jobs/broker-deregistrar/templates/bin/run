@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -e
+set -x
+
+export PATH="$PATH:/var/vcap/packages/cf-cli/bin"
+
+cfAPIURL='<%= p("cf.api_url") %>'
+cfAdminUserName='<%= p("cf.admin_username") %>'
+cfAdminPassword='<%= p("cf.admin_password") %>'
+brokerName='<%= p("broker.name") %>'
+brokerServiceName='<%= p("rdpg.broker.service_name") %>'
+
+cf --version
+cf api --skip-ssl-validation $cfAPIURL
+cf auth $cfAdminUserName $cfAdminPassword
+
+serviceNames=( $(cf service-access | awk 'NR > 3 {print $1}') )
+for serviceName in ${serviceNames[@]}
+do 
+  echo "Disabling Service Access For ${serviceName}"
+  cf disable-service-access ${serviceName}
+done
+
+echo "Service Access:"
+cf service-access
+
+echo "Deleting Service Broker ${brokerName}"
+cf delete-service-broker -f $brokerName
+
+echo "Service Broker:"
+cf service-brokers
+

@@ -1,0 +1,196 @@
+---
+meta:
+  environment: (( merge ))
+
+  stemcell:
+    name: bosh-aws-xen-centos-7-go_agent
+    version: latest
+
+disk_pools:
+- name: rdpgsc_disk
+  disk_size: 64_000
+  cloud_properties: {}
+
+jobs:
+  - name: rdpgmc
+    resource_pool: rdpg
+    persistent_disk: 64_000
+    properties:
+      pgbdr:
+        debug: "false"
+        hba_config: |+
+        # Any custom pg_hba.conf lines go here...
+        max_connections: "1000"
+        shared_buffers: "512MB"
+        effective_cache_size: "1536MB"
+        work_mem: "262kB"
+        maintenance_work_mem: "128MB"
+        checkpoint_segments: "32"
+        checkpoint_completion_target: "0.7"
+        wal_buffers: "16MB"
+        default_statistics_target: "100"
+      pgbouncer:
+        debug: "false"
+        admin_user: "rdpgpbadmin"
+        admin_pass: "CHANGEME@1ce12345!!!"
+      haproxy:
+        admin_user: haproxyadmin
+        admin_pass: pleasechangethis
+        admin_port: 9999
+      rdpgd_manager:
+        debug: "false"
+        log_level: "info"
+        db_pass: "CHANGEME@1ce12345!!!"
+        cluster_service: "pgbdr"
+
+  - name: sc-pgbdr-m0-r0
+    resource_pool: rdpg
+    persistent_disk_pool: rdpgsc_disk
+    properties:
+      pgbdr:
+        debug: "false"
+        hba_config: |+
+        # Any custom pg_hba.conf lines go here...
+        # Note that below is tuned assuming EC2 m3.xlarge.
+        max_connections: "4000"
+        shared_buffers: "3840MB"
+        effective_cache_size: "11520MB"
+        work_mem: "1MB"
+        maintenance_work_mem: "64MB"
+        checkpoint_segments: "32"
+        checkpoint_completion_target: "0.9"
+        wal_buffers: "16MB"
+        default_statistics_target: "100"
+      pgbouncer:
+        debug: "false"
+        admin_user: "rdpgpbadmin"
+        admin_pass: "CHANGEME@1ce12345!!!"
+      haproxy:
+        admin_user: haproxyadmin
+        admin_pass: pleasechangethis
+        admin_port: 9999
+      rdpgd_service:
+        debug: "false"
+        log_level: "info"
+        cluster_name: ""
+        matrix_name: sc-pgbdr-m0-r0
+        pool_size: 100
+        db_pass: "CHANGEME@1ce12345!!!"
+        max_instances_allowed: 12
+        max_instances_limit: 15
+        cluster_service: "pgbdr"
+
+
+  - name: sc-pgbdr-m0-r1
+    resource_pool: rdpg
+    persistent_disk_pool: rdpgsc_disk
+    properties:
+      pgbdr:
+        debug: "false"
+        hba_config: |+
+        # Any custom pg_hba.conf lines go here...
+        # Note that below is tuned assuming EC2 m3.xlarge.
+        max_connections: "4000"
+        shared_buffers: "3840MB"
+        effective_cache_size: "11520MB"
+        work_mem: "1MB"
+        maintenance_work_mem: "64MB"
+        checkpoint_segments: "32"
+        checkpoint_completion_target: "0.9"
+        wal_buffers: "16MB"
+        default_statistics_target: "100"
+      pgbouncer:
+        debug: "false"
+        admin_user: "rdpgpbadmin"
+        admin_pass: "CHANGEME@1ce12345!!!"
+      haproxy:
+        admin_user: haproxyadmin
+        admin_pass: pleasechangethis
+        admin_port: 9999
+      rdpgd_service:
+        debug: "false"
+        log_level: "info"
+        cluster_name: ""
+        matrix_name: sc-pgbdr-m0-r1
+        pool_size: 100
+        db_pass: "CHANGEME@1ce12345!!!"
+        max_instances_allowed: 12
+        max_instances_limit: 15
+        cluster_service: "pgbdr"
+
+  - name: sc-pgbdr-m1-r0
+    resource_pool: rdpg
+    persistent_disk_pool: rdpgsc_disk
+    properties:
+      postgresql:
+        debug: "false"
+        hba_config: |+
+        # Any custom pg_hba.conf lines go here...
+        # Note that below is tuned assuming EC2 m3.xlarge.
+        max_connections: "4000"
+        shared_buffers: "3840MB"
+        effective_cache_size: "11520MB"
+        work_mem: "1MB"
+        maintenance_work_mem: "64MB"
+        checkpoint_segments: "32"
+        checkpoint_completion_target: "0.9"
+        wal_buffers: "16MB"
+        default_statistics_target: "100"
+      pgbouncer:
+        debug: "false"
+        admin_user: "rdpgpbadmin"
+        admin_pass: "CHANGEME@1ce12345!!!"
+      haproxy:
+        admin_user: haproxyadmin
+        admin_pass: pleasechangethis
+        admin_port: 9999
+      rdpgd_service:
+        debug: "false"
+        log_level: "info"
+        cluster_name: ""
+        matrix_name: sc-pgbdr-m1-r0
+        pool_size: 100
+        db_pass: "CHANGEME@1ce12345!!!"
+        max_instances_allowed: 12
+        max_instances_limit: 15
+        cluster_service: "postgresql"
+
+  - name: acceptance_tests
+    networks:
+      - name: rdpg
+        default: [dns, gateway]
+
+  - name: broker_registrar
+    networks:
+      - name: rdpg
+        default: [dns, gateway]
+    properties:
+      cf:
+        <<: (( merge ))
+        api_url: YOUR_CF_API_HERE 
+
+  - name: broker_deregistrar
+    networks:
+      - name: rdpg
+        default: [dns, gateway]
+    properties:
+      cf:
+        <<: (( merge ))
+        api_url: YOUR_CF_API_HERE
+
+compilation:
+  cloud_properties:
+    instance_type: m3.medium
+
+resource_pools:
+  - name: rdpg
+    cloud_properties:
+      instance_type: m3.medium
+
+  - name: errand_a
+    cloud_properties:
+      instance_type: m3.medium
+
+networks: (( merge ))
+
+properties: {}

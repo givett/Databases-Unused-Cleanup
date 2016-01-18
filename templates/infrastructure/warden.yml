@@ -1,0 +1,429 @@
+---
+meta:
+  environment: rdpg-warden
+  stemcell:
+    name: bosh-warden-boshlite-centos-go_agent
+    version: latest
+
+disk_pools:
+- name: rdpgsc_disk
+  disk_size: 32768
+  cloud_properties: {}
+
+jobs:
+  - name: rdpgmc
+    resource_pool: rdpg
+    instances: 3
+    persistent_disk: 65536
+    networks:
+      - name: rdpg
+        default: [dns, gateway]
+        static_ips:
+          - 10.244.2.2
+          - 10.244.2.6
+          - 10.244.2.10
+    properties:
+      pgbdr:
+        debug: "true"
+        hba_config: |+
+          host    replication   postgres 10.0.0.0/8  trust
+          host    all           postgres 10.0.0.0/8  trust
+          host    replication   rdpg 10.0.0.0/8  trust
+          host    all           rdpg 10.0.0.0/8  trust
+          host    all           all 192.0.0.0/8  trust
+          host    all           all 172.0.0.0/8  trust
+          host    replication   all 172.0.0.0/8  trust
+        max_connections: "250"
+        shared_buffers: "128MB"
+        effective_cache_size: "256MB"
+        work_mem: "2MB"
+        maintenance_work_mem: "16MB"
+        checkpoint_segments: "16"
+        checkpoint_completion_target: "0.7"
+        wal_buffers: "1MB"
+        default_statistics_target: "100"
+      pgbouncer:
+        debug: "true"
+        admin_user: "rdpgpbadmin"
+        admin_pass: "admin"
+      consul:
+        debug: "true"
+        server: true
+        join_node: 10.244.2.2
+        join_nodes:
+          - 10.244.2.2
+          - 10.244.2.6
+          - 10.244.2.10
+      haproxy:
+        admin_user: admin
+        admin_pass: admin
+        admin_port: 9999
+      rdpgd_manager:
+        debug: "true"
+        log_level: "trace"
+        db_pass: "admin"
+
+
+  - name: sc-pgbdr-m0-r0
+    resource_pool: rdpg
+    instances: 2
+    persistent_disk_pool: rdpgsc_disk
+    networks:
+      - name: rdpg
+        default: [dns, gateway]
+    properties:
+      pgbdr:
+        debug: "true"
+        hba_config: |+
+          host    replication   postgres 10.0.0.0/8  trust
+          host    all           postgres 10.0.0.0/8  trust
+          host    replication   rdpg 10.0.0.0/8  trust
+          host    all           rdpg 10.0.0.0/8  trust
+          host    all           all 192.0.0.0/8  trust
+          host    all           all 172.0.0.0/8  trust
+          host    replication   all 172.0.0.0/8  trust
+        max_connections: "250"
+        shared_buffers: "128MB"
+        effective_cache_size: "256MB"
+        work_mem: "2MB"
+        maintenance_work_mem: "16MB"
+        checkpoint_segments: "16"
+        checkpoint_completion_target: "0.7"
+        wal_buffers: "1MB"
+        default_statistics_target: "100"
+      pgbouncer:
+        debug: "true"
+        admin_user: "rdpgpbadmin"
+        admin_pass: "admin"
+      consul:
+        debug: "true"
+        join_node: 10.244.2.2
+        server: false
+      haproxy:
+        admin_user: admin
+        admin_pass: admin
+        admin_port: 9999
+      rdpgd_service:
+        debug: "true"
+        log_level: "trace"
+        cluster_name: ""
+        matrix_name: sc-pgbdr-m0-r0
+        type: shared
+        size: small
+        db_pass: "admin"
+        pool_size: 10
+        max_instances_allowed: 6
+        max_instances_limit: 10
+
+  - name: sc-pgbdr-m0-r1
+    resource_pool: rdpg
+    instances: 2
+    persistent_disk_pool: rdpgsc_disk
+    networks:
+      - name: rdpg
+        default: [dns, gateway]
+    properties:
+      pgbdr:
+        debug: "true"
+        hba_config: |+
+          host    replication   postgres 10.0.0.0/8  trust
+          host    all           postgres 10.0.0.0/8  trust
+          host    replication   rdpg 10.0.0.0/8  trust
+          host    all           rdpg 10.0.0.0/8  trust
+          host    all           all 192.0.0.0/8  trust
+          host    all           all 172.0.0.0/8  trust
+          host    replication   all 172.0.0.0/8  trust
+        max_connections: "250"
+        shared_buffers: "128MB"
+        effective_cache_size: "256MB"
+        work_mem: "2MB"
+        maintenance_work_mem: "16MB"
+        checkpoint_segments: "16"
+        checkpoint_completion_target: "0.7"
+        wal_buffers: "1MB"
+        default_statistics_target: "100"
+      pgbouncer:
+        debug: "true"
+        admin_user: "rdpgpbadmin"
+        admin_pass: "admin"
+      consul:
+        debug: "true"
+        join_node: 10.244.2.2
+        server: false
+      haproxy:
+        admin_user: admin
+        admin_pass: admin
+        admin_port: 9999
+      rdpgd_service:
+        debug: "true"
+        log_level: "trace"
+        cluster_name: ""
+        matrix_name: sc-pgbdr-m0-r1
+        type: shared
+        size: small
+        db_pass: "admin"
+        pool_size: 10
+        max_instances_allowed: 6
+        max_instances_limit: 10
+
+  - name: sc-pgbdr-m1-r0
+    resource_pool: rdpg
+    instances: 1
+    persistent_disk_pool: rdpgsc_disk
+    networks:
+      - name: rdpg
+        default: [dns, gateway]
+    properties:
+      postgresql:
+        debug: "true"
+        hba_config: |+
+          host    replication   postgres 10.0.0.0/8  trust
+          host    all           postgres 10.0.0.0/8  trust
+          host    replication   rdpg 10.0.0.0/8  trust
+          host    all           rdpg 10.0.0.0/8  trust
+          host    all           all 192.0.0.0/8  trust
+          host    all           all 172.0.0.0/8  trust
+          host    replication   all 172.0.0.0/8  trust
+        max_connections: "250"
+        shared_buffers: "128MB"
+        effective_cache_size: "256MB"
+        work_mem: "2MB"
+        maintenance_work_mem: "16MB"
+        checkpoint_segments: "16"
+        checkpoint_completion_target: "0.7"
+        wal_buffers: "1MB"
+        default_statistics_target: "100"
+      pgbouncer:
+        debug: "true"
+        admin_user: "rdpgpbadmin"
+        admin_pass: "admin"
+      consul:
+        debug: "true"
+        join_node: 10.244.2.2
+        server: false
+      haproxy:
+        admin_user: admin
+        admin_pass: admin
+        admin_port: 9999
+      rdpgd_service:
+        cluster_service: "postgresql"
+        debug: "true"
+        log_level: "trace"
+        cluster_name: ""
+        matrix_name: sc-pgbdr-m1-r0
+        type: shared
+        size: small
+        db_pass: "admin"
+        pool_size: 10
+        max_instances_allowed: 12
+        max_instances_limit: 15
+
+  - name: acceptance_tests
+    resource_pool: errand_a
+    networks:
+      - name: rdpg
+    properties:
+      acceptance_tests:
+        api: https://api.bosh-lite.com
+        apps_domain: 10.244.0.34.xip.io
+        admin_user:    admin
+        admin_password:  admin
+
+        consul_ip: 10.244.2.2:8500
+
+        broker_url_base:  10.244.2.2:8888
+        broker_admin_user: cfadmin
+        broker_admin_password: cfadmin
+
+        datacenter: (( jobs.[0].properties.consul.datacenter || "rdpg" ))
+
+        service_name:  rdpg
+        plans:
+          - plan_name: gug
+            max_storage_mb: 512
+            max_user_connections: 10
+
+        skip_ssl_validation: true
+        timeout_scale: 0.05
+
+  - name: broker_registrar
+    resource_pool: errand_a
+    networks:
+      - name: rdpg
+    properties:
+      cf:
+        api_url: https://api.bosh-lite.com 
+
+  - name: backup_tests
+    networks:
+      - name: rdpg
+    properties:
+      cf:
+        api_url: https://api.bosh-lite.com
+        apps_domain: bosh-lite.com
+ 
+  - name: broker_deregistrar
+    resource_pool: errand_a
+    networks:
+      - name: rdpg
+    properties:
+      cf:
+        api_url: https://api.bosh-lite.com
+ 
+compilation:
+  cloud_properties:
+    name: random
+
+resource_pools:
+  - name: rdpg
+    cloud_properties:
+      name: random
+
+  - name: errand_a
+    cloud_properties:
+      name: random
+
+properties: (( merge ))
+
+networks:
+- name: rdpg
+  # Assumes up to 5 VMs, including 1 static and 4 dynamic.
+  # Plus 5 (double the size) unused IPs, due to BOSH bug/quirk.
+  subnets:
+  - cloud_properties:
+      name: random
+    range: 10.244.2.0/30
+    reserved:
+    - 10.244.2.1
+    static:
+    - 10.244.2.2
+  - cloud_properties:
+      name: random
+    range: 10.244.2.4/30
+    reserved:
+    - 10.244.2.5
+    static:
+    - 10.244.2.6
+  - cloud_properties:
+      name: random
+    range: 10.244.2.8/30
+    reserved:
+    - 10.244.2.9
+    static:
+    - 10.244.2.10
+  - cloud_properties:
+      name: random
+    range: 10.244.2.12/30
+    reserved:
+    - 10.244.2.13
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.16/30
+    reserved:
+    - 10.244.2.17
+    static: []
+
+  # Bonus double-sized network required due to BOSH oddity
+  - cloud_properties:
+      name: random
+    range: 10.244.2.20/30
+    reserved:
+    - 10.244.2.21
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.24/30
+    reserved:
+    - 10.244.2.25
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.28/30
+    reserved:
+    - 10.244.2.29
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.32/30
+    reserved:
+    - 10.244.2.33
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.36/30
+    reserved:
+    - 10.244.2.37
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.40/30
+    reserved:
+    - 10.244.2.41
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.44/30
+    reserved:
+    - 10.244.2.45
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.48/30
+    reserved:
+    - 10.244.2.49
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.52/30
+    reserved:
+    - 10.244.2.53
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.56/30
+    reserved:
+    - 10.244.2.57
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.60/30
+    reserved:
+    - 10.244.2.61
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.64/30
+    reserved:
+    - 10.244.2.65
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.68/30
+    reserved:
+    - 10.244.2.69
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.72/30
+    reserved:
+    - 10.244.2.73
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.76/30
+    reserved:
+    - 10.244.2.77
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.80/30
+    reserved:
+    - 10.244.2.81
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.84/30
+    reserved:
+    - 10.244.2.85
+    static: []

@@ -1,0 +1,77 @@
+---
+bash/bash-4.3-patches.tar.gz:
+  object_id: a20885d7-2051-4791-aba3-d4a008abc2bc
+  sha: 0b063388da75306d3b068f96330d8e0e8f2f4608
+  size: 37752
+bash/bash-4.3.tar.gz:
+  object_id: 7d87113a-e8ef-430f-8a36-994e7059b265
+  sha: 45ac3c5727e7262334f4dfadecdf601b39434e84
+  size: 7955839
+consul/consul-0.5.2.zip:
+  object_id: d4b1d420-b215-4be1-8842-866928c02d32
+  sha: b3ae610c670fc3b81737d44724ebde969da66ebf
+  size: 4803609
+consul-template/consul-template-0.9.0.tar.gz:
+  object_id: ffee4ffc-baa4-4b8a-b599-96f65ed9fa47
+  sha: a44e441f9347abe64956e5bb30c4d4b0464d1f73
+  size: 2460384
+consul-ui/consul-ui-0.5.0.zip:
+  object_id: 405d27a0-b44a-42fe-9f5e-14853cc7a5d8
+  sha: 55ae1d1de29a3a50388956262cfcb2bb6f4c34f3
+  size: 252567
+golang/go1.4.2.linux-amd64.tar.gz:
+  object_id: db6aba58-3b45-439a-a5b5-93074efea91e
+  sha: 5020af94b52b65cc9b6f11d50a67e4bae07b0aff
+  size: 62442704
+haproxy/haproxy-1.5.12.tar.gz:
+  object_id: e31b6d41-968c-4fea-80bc-fcc8a0c1d3ba
+  sha: c488f7f108ddefb558bd86e7cbc1b71636ada856
+  size: 1344813
+libevent/libevent-2.0.22.tar.gz:
+  object_id: df666015-64c4-4211-880c-b2d58e4d5a14
+  sha: a586882bc93a208318c70fc7077ed8fca9862864
+  size: 854987
+pcre/pcre-8.37.tar.gz:
+  object_id: d1e48692-455e-41fc-aed5-32dcb78e4ced
+  sha: 4a24a20c61347d8da4edc86d5475aaf70ac146bb
+  size: 2041593
+pgbdr/pgbdr-extension.tar.xz:
+  object_id: 88be0d11-9d91-45a0-99f8-8317ebd07032
+  sha: a78b75ccf80d45e8ebd760f2af552e1cf4f12ad1
+  size: 404704
+pgbdr/pgbdr.tar.xz:
+  object_id: 2e9bf2ab-5574-4ac0-a476-ab1f0542c4db
+  sha: 999927c2760737126d1755d31ec47ac276fe57e4
+  size: 10772156
+pgbouncer/pgbouncer-1.5.5.tar.gz:
+  object_id: 43314897-30bb-4dda-87e7-e144816968b6
+  sha: aea2999d46e6c87ea1dfd3e1282d64fe6569c04f
+  size: 336145
+rdpgd/rdpgd_0.1.1_linux_amd64.tar.gz:
+  object_id: 29e225dc-89de-4c96-808b-5d791ba3a185
+  sha: e263b71100ddb4cfe777821ad29f0596745c5914
+  size: 2360759
+socat/socat-2.0.0-b8.tar.gz:
+  object_id: 190320f5-4cfd-4bf4-b935-fdb174cd7960
+  sha: a83f7f4d62a892823ee788d29c0cd0ec9f54e4f2
+  size: 646180
+zlib/zlib-1.2.8.tar.gz:
+  object_id: 0feeb462-4b9d-404a-9f70-db06179d697b
+  sha: a4d316c404ff54ca545ea71a27af7dbc29817088
+  size: 571091
+remote_syslog2/remote_syslog_linux_amd64.tar.gz:
+  object_id: c56d9089-063f-4c72-9159-313d909ce8ff
+  sha: c0562f6d13e5eafece5c030c835f21fcf12fccdb
+  size: 1849384
+golang/go1.5.1.linux-amd64.tar.gz:
+  object_id: 5df7c225-6101-46df-bc8e-19c329b825bf
+  sha: 46eecd290d8803887dec718c691cc243f2175fe0
+  size: 77875767
+cf-cli/cf-cli-6.13.0.tar.gz:
+  object_id: 5fa8069f-dde3-45d4-ae7e-d507fa41e444
+  sha: 82c5774aa44af9d091d3461adfb61bdadd64aad3
+  size: 5486088
+postgresql/postgresql-9.4.5.tar.gz:
+  object_id: 34c38cab-104d-45c2-ae8d-e9996e07f2dc
+  sha: 5278d04093f3cb2e00796fae15b2e33406844d01
+  size: 23211720

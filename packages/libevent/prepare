@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+package="libevent"
+version="2.0.22"
+file="${package}-${version}.tar.gz"
+url="http://iweb.dl.sourceforge.net/project/levent/libevent/libevent-2.0/${package}-${version}-stable.tar.gz"
+
+if [[ ! -s "${package}/${file}" ]]
+then
+  mkdir -p ${package}
+  curl -s "${url}" -o "${package}/${file}"
+fi

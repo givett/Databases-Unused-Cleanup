@@ -1,0 +1,33 @@
+---
+name: pgbouncer
+packages:
+- bash-4.3
+- libevent
+- pgbouncer
+templates:
+  bin/control: bin/control
+  shell/env.erb: shell/env
+  shell/functions: shell/functions
+  config/pgbouncer.ini: config/pgbouncer.ini
+  config/users: config/users
+properties:
+  pgbouncer.debug: 
+    description: "Enable debug output, can be 'true' or 'false' (default)."
+    default: "false"
+  pgbouncer.listen_addr:
+    description: "pgbouncer administration listen address."
+    default: "*"
+  pgbouncer.listen_port:
+    description: "pgbouncer administration listen port."
+    default: "6432"
+  pgbouncer.admin_user:
+    description: "pgbouncer administration user name."
+  pgbouncer.admin_pass:
+    description: "pgbouncer administration user password."
+  pgbouncer.auth_type:
+    description: "pgbouncer administration authorization type."
+    default: "md5"
+  pgbouncer.pool_mode:
+    description: "pgbouncer connection pooling mode."
+    default: "session"
+

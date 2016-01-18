@@ -1,0 +1,37 @@
+#!/bin/bash
+
+set -e
+set -x
+
+export PATH="$PATH:/var/vcap/packages/cf-cli/bin"
+
+cfAPIURL='<%= p("cf.api_url") %>'
+cfAdminUserName='<%= p("cf.admin_username") %>'
+cfAdminPassword='<%= p("cf.admin_password") %>'
+brokerName='<%= p("broker.name") %>'
+brokerServiceName='<%= p("rdpg.broker.service_name") %>'
+brokerURL='<%= p("broker.protocol") %>://<%= p("broker.host") %>'
+brokerUserName='<%= p("broker.username") %>'
+brokerPassword='<%= p("broker.password") %>'
+
+cf --version
+cf api --skip-ssl-validation $cfAPIURL
+cf auth $cfAdminUserName $cfAdminPassword
+
+cf create-service-broker $brokerName $brokerUserName $brokerPassword $brokerURL || \
+  cf update-service-broker $brokerName $brokerUserName $brokerPassword $brokerURL
+
+flag='<%= p("rdpg.broker.enable_service_access") %>'
+
+if [[ ${flag} == "true" ]]
+then
+  serviceNames=( $(cf service-access | awk 'NR > 3 {print $1}') )
+  for serviceName in ${serviceNames[@]}
+  do
+    echo "Enabling Service Access For ${serviceName}"
+    cf enable-service-access ${serviceName}
+  done
+fi
+
+echo "Service Access:"
+cf service-access
